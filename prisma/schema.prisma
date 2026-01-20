@@ -1,0 +1,72 @@
+// This is your Prisma schema file
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Article {
+  id            String     @id @default(cuid())
+  title         String
+  description   String?    @db.Text
+  content       String?    @db.Text
+  url           String     @unique
+  urlToImage    String?
+  publishedAt   DateTime
+  author        String?
+  sourceId      String?
+  sourceName    String
+  category      Category?
+  country       String?
+  language      String     @default("en")
+  status        Status     @default(PUBLISHED)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  @@index([publishedAt])
+  @@index([category])
+  @@index([country])
+  @@index([language])
+  @@index([status])
+  @@index([sourceId])
+  @@map("articles")
+}
+
+enum Category {
+  BUSINESS
+  ENTERTAINMENT
+  GENERAL
+  HEALTH
+  SCIENCE
+  SPORTS
+  TECHNOLOGY
+}
+
+enum Status {
+  PUBLISHED
+  DRAFT
+  ARCHIVED
+}
+
+model Source {
+  id          String     @id
+  name        String
+  description String?    @db.Text
+  url         String
+  category    Category?
+  language    String
+  country     String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  @@index([country])
+  @@index([category])
+  @@index([language])
+  @@map("sources")
+}
